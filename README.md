@@ -2,6 +2,9 @@
  ./mvnw spring-boot:run
  runs it
 
+If you open in a Windows platform with Vscode , it will open in a container
+
+
 Testing
 These are a set of steps to show this works
 
