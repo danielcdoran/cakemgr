@@ -1,4 +1,6 @@
 
+ ./mvnw spring-boot:run
+ runs it
 
 Testing
 These are a set of steps to show this works
