@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.dao.DataIntegrityViolationException;
-
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 // @CrossOrigin(origins = "http://localhost:8081")
@@ -30,7 +30,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 // @RequestMapping("/api")
 public class CakeEntityController {
 
-  private ObjectMapper objectMapper;
 
   @Autowired
   CakeEntityRepository cakeEntityRepository;
@@ -175,4 +174,14 @@ public class CakeEntityController {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @GetMapping("/public/greetings")
+  public ResponseEntity<String> getPublicGreetings() {
+      return ResponseEntity.ok("Greetings from a public endpoint!");
+  }
+
+  @GetMapping("/cakes/greetings")
+  public ResponseEntity<String> getProtectedGreetings() {
+      return ResponseEntity.ok("Greetings from a protected endpoint!");
+  }  
 }

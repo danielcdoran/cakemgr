@@ -62,7 +62,7 @@ public class CakeEntityControllerTests {
 
     when(CakeEntityRepository.findById(id)).thenReturn(Optional.of(cake));
     mockMvc.perform(get("/cakes/{id}", id)
-    .header("X-API-KEY", "waracle"))
+    .header("APIKEY", "waracle"))
     .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(id))
         .andExpect(jsonPath("$.title").value(cake.getTitle()))
@@ -77,7 +77,7 @@ public class CakeEntityControllerTests {
 
     when(CakeEntityRepository.findById(id)).thenReturn(Optional.empty());
     mockMvc.perform(get("/cakes/{id}", id)
-    .header("X-API-KEY", "waracle"))
+    .header("APIKEY", "waracle"))
          .andExpect(status().isNotFound())
          .andDo(print());
   }
@@ -91,7 +91,7 @@ public class CakeEntityControllerTests {
 
     when(CakeEntityRepository.findAll()).thenReturn(cakes);
     mockMvc.perform(get("/cakes")
-    .header("X-API-KEY", "waracle"))
+    .header("APIKEY", "waracle"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(cakes.size()))
         .andDo(print());
@@ -109,7 +109,7 @@ public class CakeEntityControllerTests {
 
     when(CakeEntityRepository.findByTitleContaining(title)).thenReturn(cakes);
     mockMvc.perform(get("/cakes").params(paramsMap)
-    .header("X-API-KEY", "waracle"))
+    .header("APIKEY", "waracle"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(cakes.size()))
         .andDo(print());
@@ -125,7 +125,7 @@ public class CakeEntityControllerTests {
 
     when(CakeEntityRepository.findByTitleContaining(title)).thenReturn(cakes);
     mockMvc.perform(get("/cakes").params(paramsMap)
-    .header("X-API-KEY", "waracle"))
+    .header("APIKEY", "waracle"))
         .andExpect(status().isNoContent())
         .andDo(print());
   }
@@ -142,7 +142,7 @@ public class CakeEntityControllerTests {
 
     mockMvc.perform(put("/cakes/{id}", id).contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(updatedcake))
-        .header("X-API-KEY", "waracle"))
+        .header("APIKEY", "waracle"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.title").value(updatedcake.getTitle()))
         .andExpect(jsonPath("$.description").value(updatedcake.getDescription()))
@@ -161,7 +161,7 @@ public class CakeEntityControllerTests {
 
     mockMvc.perform(put("/cakes/{id}", id).contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(updatedcake))
-        .header("X-API-KEY", "waracle"))
+        .header("APIKEY", "waracle"))
         .andExpect(status().isNotFound())
         .andDo(print());
   }
@@ -172,7 +172,7 @@ public class CakeEntityControllerTests {
 
     doNothing().when(CakeEntityRepository).deleteById(id);
     mockMvc.perform(delete("/cakes/{id}", id)
-    .header("X-API-KEY", "waracle"))
+    .header("APIKEY", "waracle"))
          .andExpect(status().isNoContent())
          .andDo(print());
   }
@@ -181,8 +181,22 @@ public class CakeEntityControllerTests {
   void shouldDeleteAllcakes() throws Exception {
     doNothing().when(CakeEntityRepository).deleteAll();
     mockMvc.perform(delete("/cakes")
-    .header("X-API-KEY", "waracle"))
+    .header("APIKEY", "waracle"))
          .andExpect(status().isNoContent())
          .andDo(print());
+  }
+
+  @Test
+  void givenWrongAPIKeyValue_whenListOfcakes_thenUnauthorised() throws Exception {
+    List<CakeEntity> cakes = new ArrayList<>(
+        Arrays.asList(new CakeEntity(1L, "Spring Boot @WebMvcTest 1", "Description 1", "really true"),
+            new CakeEntity(2, "Spring Boot @WebMvcTest 2", "Description 2", "really true"),
+            new CakeEntity(3, "Spring Boot @WebMvcTest 3", "Description 3", "really true")));
+
+    when(CakeEntityRepository.findAll()).thenReturn(cakes);
+    mockMvc.perform(get("/cakes")
+    .header("APIKEY", "wrongAPIKeyvalue"))
+        .andExpect(status().isUnauthorized())
+        .andDo(print());
   }
 }

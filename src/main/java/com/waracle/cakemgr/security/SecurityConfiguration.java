@@ -11,8 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+@EnableWebSecurity(debug = true)
 @Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
@@ -27,9 +27,9 @@ public class SecurityConfiguration {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .exceptionHandling(configurer -> configurer.authenticationEntryPoint(unauthorizedHandler))
-                .securityMatcher("/**")
+                .securityMatcher("/cakes/**")
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers( AntPathRequestMatcher.antMatcher("/**") ).permitAll()
+                        .requestMatchers( AntPathRequestMatcher.antMatcher("/download/**") ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
